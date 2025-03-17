@@ -1,0 +1,20 @@
+name: GitHub VPS
+on: [push, workflow_dispatch]  # Rulează la fiecare push sau manual
+
+jobs:
+  run-vps:
+    runs-on: ubuntu-latest  # Poți folosi și windows-latest sau macos-latest
+    steps:
+      - name: Instalează și pornește un server SSH
+        run: |
+          sudo apt update && sudo apt install -y openssh-server
+          sudo systemctl start ssh
+          sudo systemctl enable ssh
+          echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
+          echo "root:github" | sudo chpasswd
+          sudo service ssh restart
+      - name: Afișează IP-ul și username-ul
+        run: |
+          echo "Conectează-te la acest VPS temporar:"
+          echo "ssh root@$(curl -s ifconfig.me)"
+          
